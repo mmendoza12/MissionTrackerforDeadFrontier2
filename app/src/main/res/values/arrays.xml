@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="cities">
+        <item>All Cities</item>
+        <item>Albandale Park</item>
+        <item>Archbrook</item>
+        <item>Coopertown</item>
+        <item>Dallbow</item>
+        <item>Duntsville</item>
+        <item>Greywood</item>
+        <item>Haverbrook</item>
+        <item>Lerwillbury</item>
+        <item>Ravenwall Heights</item>
+        <item>Richbow Hunt</item>
+        <item>South Moorhurst</item>
+        <item>West Moledale</item>
+    </string-array>
+
+</resources>
