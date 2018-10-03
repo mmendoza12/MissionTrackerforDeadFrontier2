@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Mission Tracker for Dead Frontier 2</string>
+
+    <string name="mission_filter">Mission City:</string>
+    <string name="giver_filter">Quest Giver City:</string>
+
+    <string name="mission_location">Mission Location: </string>
+    <string name="mission_guide">Mission Guide</string>
+
+    <string name="quest_giver">Guest Giver: </string>
+    <string name="quest_giver_location">Guest Giver Location: </string>
+    <string name="quest_giver_room">Quest Giver Room</string>
+
+    <string name="money">Money: </string>
+    <string name="exp">Exp: </string>
 </resources>

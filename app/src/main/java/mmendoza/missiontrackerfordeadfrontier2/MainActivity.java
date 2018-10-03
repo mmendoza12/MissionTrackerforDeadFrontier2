@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -19,7 +20,8 @@ public class MainActivity extends AppCompatActivity
     public static final String URL =
             "https://docs.google.com/spreadsheets/d/1YlZoRmMcscNTR0sqa1tlY37oocdmDQk7tlkOCSYg6FA/htmlview";
 
-    //
+    // Databases Helper
+    private DBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -27,8 +29,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DBHelper(this);
+
         String[] cities = getResources().getStringArray(R.array.cities);
 
+        // TODO: Set crawl delay to 1
         new Missions().execute();
     }
 
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity
                 // Get the text from the sheet, which contains the date in MM_DD_YYYY format.
                 String date = sheet.text();
 
-                sheetId = "771800048"; // TODO : Delete this terrible terrible line after testing
+                sheetId = "869625780"; // TODO : Delete this terrible terrible line after testing
 
                 // Get the tbody of the sheet with the matching sheetId
                 Elements tbody = body.select("div[id=sheets-viewport] div[id=" + sheetId
@@ -75,8 +80,11 @@ public class MainActivity extends AppCompatActivity
                 // Get each row's columns, skip the first two rows
                 for (int i = 2; i < trItems.size(); ++i)
                 {
-                    if (trItems.get(i).text().split(" ").length > 1) // Ignore blank entries
+                    if (trItems.get(i).text().split(" ").length > 2) // Ignore blank rows
                     {
+                        // ArrayList storing the data for each row.
+                        ArrayList<String> missionInfo = new ArrayList<>();
+
                         System.out.println(trItems.get(i).text()); // Entry all on one line
                         // Get the td items from the tr items (columns from the spreadsheet)
                         Elements tdItems = trItems.get(i).select("td");
@@ -84,13 +92,23 @@ public class MainActivity extends AppCompatActivity
                         {
                             if (!td.text().isEmpty())
                             {
-                                System.out.println(td.text()); // Entry pieces on new lines
+                                missionInfo.add(td.text());
+                                //System.out.println(td.text()); // Entry pieces on new lines
                             }
                             else
                             {
-                                System.out.println("EMPTY!");
+                                missionInfo.add("");
+                                //System.out.println("EMPTY!");
                             }
                         }
+
+                        // Add a mission to the database using the missionInfo ArrayList.
+                        Mission mission = new Mission(missionInfo.get(0), missionInfo.get(1),
+                                missionInfo.get(2), missionInfo.get(3), missionInfo.get(4),
+                                missionInfo.get(5), missionInfo.get(6), missionInfo.get(7),
+                                missionInfo.get(8), missionInfo.get(9), missionInfo.get(10),
+                                missionInfo.get(11), missionInfo.get(12), date);
+                        db.addMission(mission);
                     }
                 }
             }
