@@ -282,4 +282,30 @@ public class Mission
     {
         mHidden = hidden;
     }
+
+    /**
+     * Gets the title of a mission in the format of "Mission (Note)"
+     * Ex. Find Item (Pendant)
+     */
+    public String getTitle()
+    {
+        return mMissionMission + " (" + mMissionNote + ")";
+    }
+
+    /**
+     * Gets the location of a mission in the format of "Building (City)"
+     * Ex. Donut King (Dallbow)
+     */
+    public String getMissionLocation()
+    {
+        return mMissionBuilding + " (" + mMissionCity + ")";
+    }
+
+    /**
+     * Gets the location of a mission's quest giver in the format of "John Doe"
+     */
+    public String getQuestGiverLocation()
+    {
+        return mQuestGiverBuilding + " (" + mQuestGiverCity + ")";
+    }
 }

@@ -96,11 +96,12 @@ public class DBHelper extends SQLiteOpenHelper
     public void addMission(Mission mission)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
         // If no mission exists in the database with the mission's index, add it as a new mission.
-        if (updateMission(mission) < 1)
+        if (updateMission(mission, db) < 1)
         {
+            ContentValues values = new ContentValues();
+
             values.put(FIELD_INDEX, mission.getIndex());
             values.put(FIELD_MISSION_BUILDING, mission.getMissionBuilding());
             values.put(FIELD_MISSION_CITY, mission.getMissionCity());
@@ -117,9 +118,10 @@ public class DBHelper extends SQLiteOpenHelper
             values.put(FIELD_DATE, mission.getDate());
             values.put(FIELD_STATUS, mission.getStatus());
             values.put(FIELD_HIDDEN, mission.getHidden());
+
+            db.insert(MISSIONS_TABLE, null, values);
         }
 
-        db.insert(MISSIONS_TABLE, null, values);
         db.close();
     }
 
@@ -127,11 +129,11 @@ public class DBHelper extends SQLiteOpenHelper
      * Update's a mission's info if its index exists in the database.
      *
      * @param mission
+     * @param db
      * @return The number of rows updated.
      */
-    public int updateMission(Mission mission)
+    public int updateMission(Mission mission, SQLiteDatabase db)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(FIELD_MISSION_BUILDING, mission.getMissionBuilding());
@@ -150,7 +152,6 @@ public class DBHelper extends SQLiteOpenHelper
 
         int updated = db.update(MISSIONS_TABLE, values, FIELD_QUEST_GIVER + " = ?",
                 new String[]{mission.getQuestGiver()});
-        db.close();
         return updated;
     }
 
@@ -189,14 +190,14 @@ public class DBHelper extends SQLiteOpenHelper
                         cursor.getString(11), cursor.getString(12), cursor.getString(13),
                         cursor.getInt(14), cursor.getInt(15));
                 // All cities selected
-                if (missionCity.equals("All Cities") && missionCity.equals("All Cities"))
+                if (missionCity.equals("All Cities") && questGiverCity.equals("All Cities"))
                     missionsList.add(mission);
                 // Specific mission city, all giver cities
-                else if (!missionCity.equals("All Towns") && questGiverCity.equals("All Towns"))
+                else if (!missionCity.equals("All Cities") && questGiverCity.equals("All Cities"))
                     if (mission.getMissionCity().equals(missionCity))
                         missionsList.add(mission);
                 // All mission cities, specific giver city
-                else if (missionCity.equals("All Towns") && !questGiverCity.equals("All Towns"))
+                else if (missionCity.equals("All Cities") && !questGiverCity.equals("All Cities"))
                     if (mission.getQuestGiverCity().equals(questGiverCity))
                         missionsList.add(mission);
                 // Specific cities for both fields
