@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Mission Tracker for Dead Frontier 2</string>
 
+    <string name="action_settings">Settings</string>
+
     <string name="mission_filter">Mission City:</string>
     <string name="giver_filter">Quest Giver City:</string>
 
@@ -13,4 +15,8 @@
 
     <string name="money">Money: </string>
     <string name="exp">Exp: </string>
+
+    <string name="sorting">Sorting</string>
+    <string name="sorting_desc">Choose a field to sort missions by</string>
+
 </resources>

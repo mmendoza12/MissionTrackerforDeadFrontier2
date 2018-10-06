@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray"
+    android:background="@color/light_black"
     tools:context=".MainActivity">
 
     <TextView
@@ -52,7 +52,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/gray">
 
         <Spinner
             android:id="@+id/missionCitySpinner"
@@ -60,7 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingVertical="3dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:popupBackground="@color/gray"/>
 
         <TextView
             android:id="@+id/spinnerPaddingTextView"
@@ -74,7 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:paddingVertical="3dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:popupBackground="@color/gray"/>
     </LinearLayout>
 
     <TextView
@@ -88,6 +91,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadeScrollbars="false"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         android:scrollbarThumbVertical="@color/light_black"
         android:scrollbarTrackVertical="@color/dark_gray">
     </ListView>

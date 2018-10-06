@@ -126,7 +126,7 @@ public class DBHelper extends SQLiteOpenHelper
     }
 
     /**
-     * Update's a mission's info if its index exists in the database.
+     * Update's a mission's info if its quest giver exists in the database.
      *
      * @param mission
      * @param db
@@ -148,7 +148,6 @@ public class DBHelper extends SQLiteOpenHelper
         values.put(FIELD_MONEY, mission.getMoney());
         values.put(FIELD_EXP, mission.getExp());
         values.put(FIELD_CONFIRMED, mission.getConfirmed());
-        values.put(FIELD_DATE, mission.getDate());
 
         int updated = db.update(MISSIONS_TABLE, values, FIELD_QUEST_GIVER + " = ?",
                 new String[]{mission.getQuestGiver()});
@@ -189,22 +188,29 @@ public class DBHelper extends SQLiteOpenHelper
                         cursor.getString(8), cursor.getString(9), cursor.getString(10),
                         cursor.getString(11), cursor.getString(12), cursor.getString(13),
                         cursor.getInt(14), cursor.getInt(15));
+
                 // All cities selected
                 if (missionCity.equals("All Cities") && questGiverCity.equals("All Cities"))
                     missionsList.add(mission);
                 // Specific mission city, all giver cities
                 else if (!missionCity.equals("All Cities") && questGiverCity.equals("All Cities"))
+                {
                     if (mission.getMissionCity().equals(missionCity))
                         missionsList.add(mission);
+                }
                 // All mission cities, specific giver city
                 else if (missionCity.equals("All Cities") && !questGiverCity.equals("All Cities"))
+                {
                     if (mission.getQuestGiverCity().equals(questGiverCity))
                         missionsList.add(mission);
+                }
                 // Specific cities for both fields
                 else
+                {
                     if (mission.getMissionCity().equals(missionCity)
                             && mission.getQuestGiverCity().equals(questGiverCity))
                         missionsList.add(mission);
+                }
             } while (cursor.moveToNext());
         }
         cursor.close();

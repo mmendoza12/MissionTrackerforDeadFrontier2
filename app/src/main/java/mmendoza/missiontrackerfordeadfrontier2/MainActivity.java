@@ -1,9 +1,14 @@
 package mmendoza.missiontrackerfordeadfrontier2;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -43,21 +48,33 @@ public class MainActivity extends AppCompatActivity
     // Array to hold Mission objects for the list view
     private ArrayList<Mission> selectedMissionsList = new ArrayList<>();
 
+    // TODO:
+    // Keys used in preferences.xml
+    private static final String CHOICES = "pref_numberOfChoices";
+    private static final String REGIONS = "pref_regions";
+
+    // TODO:
+    // Variables used for preferences
+    private String mChoices;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+
         // String of city names used for both spinners.
         String[] cities = getResources().getStringArray(R.array.cities);
 
         // Create the database.
         // deleteDatabase(DBHelper.DATABASE_NAME); // TODO : Delete this or what
-        // TODO: db.deleteOldMissions but where should i put this hm...
         db = new DBHelper(this);
 
-        // TODO: Set crawl delay to 1
+        // TODO: Set crawl delay to at least 1 second
         // Start the JSoup process.
         new Missions().execute();
 
@@ -71,38 +88,17 @@ public class MainActivity extends AppCompatActivity
         missionsListAdapter =
                 new MissionListAdapter(this, R.layout.mission_list_item, selectedMissionsList);
 
-        // missionCitySpinner adapter
-        final ArrayAdapter<String> missionCitySpinnerAdapter =
+        // Spinner Adapter
+        final ArrayAdapter<String> citySpinnerAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cities);
-        missionCitySpinner.setAdapter(missionCitySpinnerAdapter);
+        missionCitySpinner.setAdapter(citySpinnerAdapter);
+        giverCitySpinner.setAdapter(citySpinnerAdapter);
 
-        // giverCitySpinner adapter
-        final ArrayAdapter<String> giverCitySpinnerAdapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cities);
-                //new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, cities); // TODO: Which is better to use?
-        giverCitySpinner.setAdapter(giverCitySpinnerAdapter); // TODO: Try using same adapter for both spinners...
-
-        // missionCitySpinner Listener
-        AdapterView.OnItemSelectedListener missionCitySpinnerListener = new AdapterView.OnItemSelectedListener()
+        // Spinner Listener
+        AdapterView.OnItemSelectedListener citySpinnerListener = new AdapterView.OnItemSelectedListener()
         {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                spinnerItemSelected();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView)
-            {
-
-            }
-        };
-
-        // giverCitySpinner Listener
-        AdapterView.OnItemSelectedListener giverCitySpinnerListener = new AdapterView.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l)
+            public void onItemSelected(AdapterView<?> spinner, View view, int i, long l)
             {
                 spinnerItemSelected();
             }
@@ -115,12 +111,49 @@ public class MainActivity extends AppCompatActivity
         };
 
         // Set the spinner listeners.
-        // TODO : Try using one listener for both spinners... hm...
-        missionCitySpinner.setOnItemSelectedListener(missionCitySpinnerListener);
-        giverCitySpinner.setOnItemSelectedListener(giverCitySpinnerListener);
+        missionCitySpinner.setOnItemSelectedListener(citySpinnerListener);
+        giverCitySpinner.setOnItemSelectedListener(citySpinnerListener);
 
         // TODO: Add left swipe and right swipe functionality to list items.
+
+        // TODO: Get the settings preferences working
+        //mChoices = preferences.getString(CHOICES, "Dallbow");
+        //spinnerItemSelected();
+        //String giverCity = String.valueOf(mChoices);
     }
+
+    @Override
+    // Inflate the Settings menu within MainActivity.
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    // Respond to the user clicking the gear icon.
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Intent to go to SettingsActivity
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        startActivity(settingsIntent);
+        return super.onOptionsItemSelected(item);
+    }
+
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener()
+            {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+                {
+                    switch(key)
+                    {
+                        case CHOICES:
+                            System.out.println("Make changes here");
+                            break;
+                    }
+                }
+            };
 
     /**
      * Fetches the data from the URL.
@@ -136,6 +169,9 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Object doInBackground(Object[] objects)
         {
+            // Delete any expired missions from the database
+            db.deleteOldMissions(date);
+
             Document doc;
 
             try
@@ -211,7 +247,7 @@ public class MainActivity extends AppCompatActivity
             super.onPostExecute(o);
 
             // Update the date TextView.
-            dateTextView.setText(date);
+            dateTextView.setText("Missions Provided For " + date);
 
             // Refresh the spinner once tht sync task has finished.
             spinnerItemSelected();

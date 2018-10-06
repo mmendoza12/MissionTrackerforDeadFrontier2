@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:entries="@array/cities"
+        android:entryValues="@array/cities"
+        android:key="pref_numberOfChoices"
+        android:title="@string/sorting"
+        android:summary="@string/sorting_desc"
+        android:persistent="true"
+        />
+
+</PreferenceScreen>
