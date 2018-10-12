@@ -7,8 +7,11 @@ package mmendoza.missiontrackerfordeadfrontier2;
  */
 public class Mission
 {
-    // The Mission's index in the spreadsheet, acts as a unique identifier
-    private String mIndex;
+    // The Mission's row in the spreadsheet, acts as a unique identifier
+    private int mRow;
+
+    // The Mission's index in the spreadsheet
+    private int mIndex;
 
     // Mission info
     private String mMissionBuilding;
@@ -24,8 +27,8 @@ public class Mission
     private String mQuestGiverRoom;
 
     // Reward info
-    private String mMoney;
-    private String mExp;
+    private int mMoney;
+    private int mExp;
 
     // The contributor that confirmed the mission
     private String mConfirmed;
@@ -42,7 +45,8 @@ public class Mission
     /**
      * Creates Mission objects to store the data for a single mission.
      *
-     * @param index Index of the mission on the spreadsheet. Acts as a unique identifier.
+     * @param row Row of the mission on the spreadsheet. Acts as a unique identifier.
+     * @param index Index of the mission on the spreadsheet.
      * @param missionBuilding The building the mission is completed in. (Sunnydale Apartments)
      * @param missionCity The city the mission is completed in. (Dallbow)
      * @param missionMission The mission of the mission. (Find Item, Find Person)
@@ -57,11 +61,12 @@ public class Mission
      * @param confirmed The username of who the mission guide was confirmed by.
      * @param date The date the mission was available. (10-1-2018)
      */
-    public Mission(String index, String missionBuilding, String missionCity, String missionMission,
+    public Mission(int row, int index, String missionBuilding, String missionCity, String missionMission,
                    String missionNote, String missionGuide, String questGiver,
                    String questGiverBuilding, String questGiverCity, String questGiverRoom,
-                   String money, String exp, String confirmed, String date)
+                   int money, int exp, String confirmed, String date)
     {
+        mRow = row;
         mIndex = index;
         mMissionBuilding = missionBuilding;
         mMissionCity = missionCity;
@@ -83,7 +88,8 @@ public class Mission
     /**
      * Creates Mission objects to store the data for a single mission.
      *
-     * @param index Index of the mission on the spreadsheet. Acts as a unique identifier.
+     * @param row Row of the mission on the spreadsheet. Acts as a unique identifier.
+     * @param index Index of the mission on the spreadsheet.
      * @param missionBuilding The building the mission is completed in. (Sunnydale Apartments)
      * @param missionCity The city the mission is completed in. (Dallbow)
      * @param missionMission The mission of the mission. (Find Item, Find Person)
@@ -100,11 +106,12 @@ public class Mission
      * @param status The mission's status.
      * @param hidden The mission's hidden status.
      */
-    public Mission(String index, String missionBuilding, String missionCity, String missionMission,
-                   String missionNote, String missionGuide, String questGiver,
+    public Mission(int row, int index, String missionBuilding, String missionCity,
+                   String missionMission, String missionNote, String missionGuide, String questGiver,
                    String questGiverBuilding, String questGiverCity, String questGiverRoom,
-                   String money, String exp, String confirmed, String date, int status, int hidden)
+                   int money, int exp, String confirmed, String date, int status, int hidden)
     {
+        mRow = row;
         mIndex = index;
         mMissionBuilding = missionBuilding;
         mMissionCity = missionCity;
@@ -123,12 +130,22 @@ public class Mission
         mHidden = hidden;
     }
 
-    public String getIndex()
+    public int getRow()
+    {
+        return mRow;
+    }
+
+    public void setRow(int row)
+    {
+        mRow = row;
+    }
+
+    public int getIndex()
     {
         return mIndex;
     }
 
-    public void setIndex(String index)
+    public void setIndex(int index)
     {
         mIndex = index;
     }
@@ -223,22 +240,22 @@ public class Mission
         mQuestGiverRoom = questGiverRoom;
     }
 
-    public String getMoney()
+    public int getMoney()
     {
         return mMoney;
     }
 
-    public void setMoney(String money)
+    public void setMoney(int money)
     {
         mMoney = money;
     }
 
-    public String getExp()
+    public int getExp()
     {
         return mExp;
     }
 
-    public void setExp(String exp)
+    public void setExp(int exp)
     {
         mExp = exp;
     }
@@ -285,11 +302,11 @@ public class Mission
 
     /**
      * Gets the title of a mission in the format of "Mission (Note)"
-     * Ex. Find Item (Pendant)
+     * Ex. 1. Find Item (Pendant)
      */
     public String getTitle()
     {
-        return mMissionMission + " (" + mMissionNote + ")";
+        return String.valueOf(mIndex) + ". " + mMissionMission + " (" + mMissionNote + ")";
     }
 
     /**

@@ -23,6 +23,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -50,12 +51,21 @@ public class MainActivity extends AppCompatActivity
 
     // TODO:
     // Keys used in preferences.xml
-    private static final String CHOICES = "pref_numberOfChoices";
-    private static final String REGIONS = "pref_regions";
+    private static final String SORTING = "pref_sorting";
+    private static final String ORDERING = "pref_ordering";
+    private static final String DEFAULT_MISSION_CITY = "pref_mission_city";
+    private static final String DEFAULT_QUEST_GIVER_CITY = "pref_quest_giver_city";
+    public static final String HIDE_MISSIONS = "pref_hide_missions";
+    public static final String HIDE_UI_ELEMENTS = "pref_hide_ui_elements";
 
     // TODO:
     // Variables used for preferences
-    private String mChoices;
+    private String mSorting;
+    private String mOrdering;
+    private String mDefaultMissionCity;
+    private String mDefaultQuestGiverCity;
+    private Set<String> mHideMissions;
+    private Set<String> mHideUIELements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -71,7 +81,7 @@ public class MainActivity extends AppCompatActivity
         String[] cities = getResources().getStringArray(R.array.cities);
 
         // Create the database.
-        // deleteDatabase(DBHelper.DATABASE_NAME); // TODO : Delete this or what
+        deleteDatabase(DBHelper.DATABASE_NAME); // TODO : Delete this or what
         db = new DBHelper(this);
 
         // TODO: Set crawl delay to at least 1 second
@@ -117,9 +127,15 @@ public class MainActivity extends AppCompatActivity
         // TODO: Add left swipe and right swipe functionality to list items.
 
         // TODO: Get the settings preferences working
-        //mChoices = preferences.getString(CHOICES, "Dallbow");
-        //spinnerItemSelected();
-        //String giverCity = String.valueOf(mChoices);
+        mSorting = preferences.getString(SORTING, "mission_index");
+        mOrdering = preferences.getString(ORDERING, "ASC");
+        mDefaultMissionCity = preferences.getString(DEFAULT_MISSION_CITY, "All Cities");
+        mDefaultQuestGiverCity= preferences.getString(DEFAULT_QUEST_GIVER_CITY, "All Cities");
+        mHideMissions = preferences.getStringSet(HIDE_MISSIONS, null);
+        mHideUIELements = preferences.getStringSet(HIDE_UI_ELEMENTS, null);
+
+        //if (mHideMissions.contains("Unconfirmed"))
+          //  System.out.println("*!*!!*!*!**!!* UNCONFIRMED!!!!!");
     }
 
     @Override
@@ -148,7 +164,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     switch(key)
                     {
-                        case CHOICES:
+                        case SORTING:
                             System.out.println("Make changes here");
                             break;
                     }
@@ -169,9 +185,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Object doInBackground(Object[] objects)
         {
-            // Delete any expired missions from the database
-            db.deleteOldMissions(date);
-
             Document doc;
 
             try
@@ -189,7 +202,10 @@ public class MainActivity extends AppCompatActivity
                 // Get the text from the sheet, which contains the date in MM_DD_YYYY format.
                 date = sheet.text();
 
-                //sheetId = "869625780"; // TODO : Delete this terrible terrible line after testing
+                // Delete any expired missions from the database
+                db.deleteOldMissions(date);
+
+                sheetId = "1043912396"; // TODO : Delete this terrible terrible line after testing
 
                 // Get the tbody of the sheet with the matching sheetId
                 Elements tbody = body.select("div[id=sheets-viewport] div[id=" + sheetId
@@ -207,6 +223,10 @@ public class MainActivity extends AppCompatActivity
                         ArrayList<String> missionInfo = new ArrayList<>();
 
                         //System.out.println(trItems.get(i).text()); // Entry all on one line
+
+                        // Get the spreadsheet row of the mission
+                        int row = Integer.parseInt(trItems.get(i).select("th div").text());
+
                         // Get the td items from the tr items (columns from the spreadsheet)
                         Elements tdItems = trItems.get(i).select("td");
                         for (Element td : tdItems)
@@ -223,12 +243,19 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
 
+                        // Check for empty entries of money and exp to parse them as integers later
+                        if (missionInfo.get(10).isEmpty())
+                            missionInfo.set(10, "0");
+                        if (missionInfo.get(11).isEmpty())
+                            missionInfo.set(11, "0");
+
                         // Add a mission to the database using the missionInfo ArrayList.
-                        Mission mission = new Mission(missionInfo.get(0), missionInfo.get(1),
-                                missionInfo.get(2), missionInfo.get(3), missionInfo.get(4),
-                                missionInfo.get(5), missionInfo.get(6), missionInfo.get(7),
-                                missionInfo.get(8), missionInfo.get(9), missionInfo.get(10),
-                                missionInfo.get(11), missionInfo.get(12), date);
+                        Mission mission = new Mission(row, Integer.parseInt(missionInfo.get(0)),
+                                missionInfo.get(1), missionInfo.get(2), missionInfo.get(3),
+                                missionInfo.get(4), missionInfo.get(5), missionInfo.get(6),
+                                missionInfo.get(7), missionInfo.get(8), missionInfo.get(9),
+                                Integer.parseInt(missionInfo.get(10)),
+                                Integer.parseInt(missionInfo.get(11)), missionInfo.get(12), date);
                         db.addMission(mission);
                     }
                 }
@@ -268,6 +295,6 @@ public class MainActivity extends AppCompatActivity
 
         // Get the missions from the database matching the selected mission and quest giver cities
         // and add them to the missionsListAdapter.
-        missionsListAdapter.addAll(db.getMissions(missionCity, giverCity));
+        missionsListAdapter.addAll(db.getMissions(missionCity, giverCity, mSorting, mOrdering));
     }
 }

@@ -2,12 +2,55 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:entries="@array/cities"
-        android:entryValues="@array/cities"
-        android:key="pref_numberOfChoices"
+        android:entries="@array/sorting_entries"
+        android:entryValues="@array/sorting_entry_values"
+        android:key="pref_sorting"
         android:title="@string/sorting"
         android:summary="@string/sorting_desc"
         android:persistent="true"
+        android:defaultValue="mission_index"
         />
+
+    <ListPreference
+        android:entries="@array/ordering_entries"
+        android:entryValues="@array/ordering_entry_values"
+        android:key="pref_ordering"
+        android:title="@string/ordering"
+        android:summary="@string/ordering_desc"
+        android:persistent="true"
+        android:defaultValue="ASC"
+        />
+
+    <ListPreference
+        android:entries="@array/cities"
+        android:entryValues="@array/cities"
+        android:key="pref_mission_city"
+        android:title="@string/default_mission_city"
+        android:summary="@string/default_mission_city_desc"
+        android:persistent="true"
+        android:defaultValue="All Cities"
+        />
+
+    <ListPreference
+        android:entries="@array/cities"
+        android:entryValues="@array/cities"
+        android:key="pref_quest_giver_city"
+        android:title="@string/default_quest_giver_city"
+        android:summary="@string/default_quest_giver_city_desc"
+        android:persistent="true"
+        android:defaultValue="All Cities"
+        />
+
+    <MultiSelectListPreference
+        android:entries="@array/hide_missions_entries"
+        android:entryValues="@array/hide_missions_entries"
+        android:key="pref_hide_missions"
+        android:title="@string/hide_missions"/>
+
+    <MultiSelectListPreference
+        android:entries="@array/hide_ui_elements"
+        android:entryValues="@array/hide_missions_entries"
+        android:key="pref_hide_ui_elements"
+        android:title="@string/hide_ui_elements"/>
 
 </PreferenceScreen>

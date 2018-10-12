@@ -76,11 +76,11 @@ public class MissionListAdapter extends ArrayAdapter<Mission>
 
         // Set the mission's money.
         TextView moneyAmountTextView = view.findViewById(R.id.moneyAmountTextView);
-        moneyAmountTextView.setText(selectedMission.getMoney());
+        moneyAmountTextView.setText(String.valueOf(selectedMission.getMoney()));
 
         // Set the mission's exp.
         TextView expAmountTextView = view.findViewById(R.id.expAmountTextView);
-        expAmountTextView.setText(selectedMission.getExp());
+        expAmountTextView.setText(String.valueOf(selectedMission.getExp()));
 
         // If the mission is completed, change the list item's text color to green.
         // If the mission is hidden, change it to red.
@@ -122,6 +122,7 @@ public class MissionListAdapter extends ArrayAdapter<Mission>
             moneyTextView.setTextColor(ContextCompat.getColor(mContext, statusColor));
             moneyAmountTextView.setTextColor(ContextCompat.getColor(mContext, statusColor));
 
+            // Mission exp.
             TextView expTextView = view.findViewById(R.id.expTextView);
             expTextView.setTextColor(ContextCompat.getColor(mContext, statusColor));
             expAmountTextView.setTextColor(ContextCompat.getColor(mContext, statusColor));

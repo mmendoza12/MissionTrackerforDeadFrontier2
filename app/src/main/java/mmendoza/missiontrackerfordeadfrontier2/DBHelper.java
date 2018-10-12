@@ -18,7 +18,8 @@ public class DBHelper extends SQLiteOpenHelper
 
     // Database Table "Missions" and its fields
     private static final String MISSIONS_TABLE = "Missions";
-    public static final String FIELD_INDEX = "ind";
+    public static final String FIELD_ROW = "mission_row";
+    public static final String FIELD_INDEX = "mission_index";
     private static final String FIELD_MISSION_BUILDING = "mission_building";
     private static final String FIELD_MISSION_CITY = "mission_city";
     public static final String FIELD_MISSION_MISSION = "mission_mission";
@@ -55,7 +56,8 @@ public class DBHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         String createQuery = "CREATE TABLE IF NOT EXISTS " + MISSIONS_TABLE + "("
-                + FIELD_INDEX + " TEXT, "
+                + FIELD_ROW + " INTEGER, "
+                + FIELD_INDEX + " INTEGER, "
                 + FIELD_MISSION_BUILDING + " TEXT, "
                 + FIELD_MISSION_CITY + " TEXT, "
                 + FIELD_MISSION_MISSION + " TEXT, "
@@ -65,8 +67,8 @@ public class DBHelper extends SQLiteOpenHelper
                 + FIELD_QUEST_GIVER_BUILDING + " TEXT, "
                 + FIELD_QUEST_GIVER_CITY + " TEXT, "
                 + FIELD_QUEST_GIVER_ROOM + " TEXT, "
-                + FIELD_MONEY + " TEXT, "
-                + FIELD_EXP + " TEXT, "
+                + FIELD_MONEY + " INTEGER, "
+                + FIELD_EXP + " INTEGER, "
                 + FIELD_CONFIRMED + " TEXT, "
                 + FIELD_DATE + " TEXT, "
                 + FIELD_STATUS + " INTEGER, "
@@ -88,8 +90,8 @@ public class DBHelper extends SQLiteOpenHelper
     }
 
     /**
-     * Add a single mission to the db table "Missions" if its index is not found.
-     * If the index is found, it will update the mission's record instead.
+     * Add a single mission to the db table "Missions" if its row is not found.
+     * If the row is found, it will update the mission's record instead.
      *
      * @param mission The mission to be added.
      */
@@ -97,11 +99,12 @@ public class DBHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // If no mission exists in the database with the mission's index, add it as a new mission.
+        // If no mission exists in the database with the mission's row, add it as a new mission.
         if (updateMission(mission, db) < 1)
         {
             ContentValues values = new ContentValues();
 
+            values.put(FIELD_ROW, mission.getRow());
             values.put(FIELD_INDEX, mission.getIndex());
             values.put(FIELD_MISSION_BUILDING, mission.getMissionBuilding());
             values.put(FIELD_MISSION_CITY, mission.getMissionCity());
@@ -126,7 +129,7 @@ public class DBHelper extends SQLiteOpenHelper
     }
 
     /**
-     * Update's a mission's info if its quest giver exists in the database.
+     * Update's a mission's info if its row exists
      *
      * @param mission
      * @param db
@@ -136,6 +139,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         ContentValues values = new ContentValues();
 
+        values.put(FIELD_INDEX, mission.getIndex());
         values.put(FIELD_MISSION_BUILDING, mission.getMissionBuilding());
         values.put(FIELD_MISSION_CITY, mission.getMissionCity());
         values.put(FIELD_MISSION_MISSION, mission.getMissionMission());
@@ -149,8 +153,8 @@ public class DBHelper extends SQLiteOpenHelper
         values.put(FIELD_EXP, mission.getExp());
         values.put(FIELD_CONFIRMED, mission.getConfirmed());
 
-        int updated = db.update(MISSIONS_TABLE, values, FIELD_QUEST_GIVER + " = ?",
-                new String[]{mission.getQuestGiver()});
+        int updated = db.update(MISSIONS_TABLE, values, FIELD_ROW + " = ?",
+                new String[]{String.valueOf(mission.getRow())});
         return updated;
     }
 
@@ -166,28 +170,35 @@ public class DBHelper extends SQLiteOpenHelper
         db.close();
     }
 
-    public ArrayList<Mission> getMissions(String missionCity, String questGiverCity)
+    /**
+     * Gets the missions that satisfy the parameter fields.
+     *
+     * @param missionCity The mission city to filter by.
+     * @param questGiverCity The quest giver city to filter by.
+     * @param sortField The mission field to sort by.
+     * @param sortOrder Specifies Ascending or Desdcending order.
+     * @return The list of missions.
+     */
+    public ArrayList<Mission> getMissions(String missionCity, String questGiverCity,
+                                          String sortField, String sortOrder)
     {
         ArrayList<Mission> missionsList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(
-                MISSIONS_TABLE,
-                new String[] {FIELD_INDEX, FIELD_MISSION_BUILDING, FIELD_MISSION_CITY,
-                        FIELD_MISSION_MISSION, FIELD_MISSION_NOTE, FIELD_MISSION_GUIDE,
-                        FIELD_QUEST_GIVER, FIELD_QUEST_GIVER_BUILDING, FIELD_QUEST_GIVER_CITY,
-                        FIELD_QUEST_GIVER_ROOM, FIELD_MONEY, FIELD_EXP, FIELD_CONFIRMED, FIELD_DATE,
-                        FIELD_STATUS, FIELD_HIDDEN},
-                null, null, null, null, null, null);
+
+        // Sort the database
+        String sortQuery = "SELECT * FROM " + MISSIONS_TABLE +
+                " ORDER BY " + sortField + " " + sortOrder + ";";
+        Cursor cursor = db.rawQuery(sortQuery, null);
 
         if (cursor.moveToFirst())
         {
             do {
-                Mission mission = new Mission(cursor.getString(0), cursor.getString(1),
+                Mission mission = new Mission(cursor.getInt(0), cursor.getInt(1),
                         cursor.getString(2), cursor.getString(3), cursor.getString(4),
                         cursor.getString(5), cursor.getString(6), cursor.getString(7),
                         cursor.getString(8), cursor.getString(9), cursor.getString(10),
-                        cursor.getString(11), cursor.getString(12), cursor.getString(13),
-                        cursor.getInt(14), cursor.getInt(15));
+                        cursor.getInt(11), cursor.getInt(12), cursor.getString(13),
+                        cursor.getString(14), cursor.getInt(15), cursor.getInt(16));
 
                 // All cities selected
                 if (missionCity.equals("All Cities") && questGiverCity.equals("All Cities"))

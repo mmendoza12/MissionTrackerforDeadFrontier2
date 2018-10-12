@@ -17,4 +17,38 @@
         <item>West Moledale</item>
     </string-array>
 
+    <string-array name="sorting_entries">
+        <item>Index</item>
+        <item>Money</item>
+        <item>Exp</item>
+    </string-array>
+
+    <string-array name="sorting_entry_values">
+        <item>mission_index</item>
+        <item>money</item>
+        <item>exp</item>
+    </string-array>
+
+    <string-array name="ordering_entries">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+
+    <string-array name="ordering_entry_values">
+        <item>ASC</item>
+        <item>DESC</item>
+    </string-array>
+
+    <string-array name="hide_missions_entries">
+        <item>Completed</item>
+        <item>Marked</item>
+        <item>Ignored</item>
+        <item>Unconfirmed</item>
+    </string-array>
+
+    <string-array name="hide_ui_elements">
+        <item>Date</item>
+        <item>Dropdown Labels</item>
+    </string-array>
+
 </resources>

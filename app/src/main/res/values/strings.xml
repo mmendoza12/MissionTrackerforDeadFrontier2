@@ -17,6 +17,23 @@
     <string name="exp">Exp: </string>
 
     <string name="sorting">Sorting</string>
-    <string name="sorting_desc">Choose a field to sort missions by</string>
+    <string name="sorting_desc">Choose a field to sort missions by
+    \nCurrent setting: \%s</string>
+
+    <string name="ordering">Ordering</string>
+    <string name="ordering_desc">Order missions by Ascending or Descending order
+        \nCurrent setting: \%s</string>
+
+    <string name="default_mission_city">Default Mission City</string>
+    <string name="default_mission_city_desc">Choose which Mission City to have selected each time
+        you open the app\nCurrent setting: \%s</string>
+
+    <string name="default_quest_giver_city">Default Quest Giver City</string>
+    <string name="default_quest_giver_city_desc">Choose which Quest Giver City to have selected each
+        time you open the app\nCurrent setting: \%s</string>
+
+    <string name="hide_missions">Hide Missions</string>
+
+    <string name="hide_ui_elements">Hide UI Elements</string>
 
 </resources>
